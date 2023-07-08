@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">WizardMVI</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
+    <string name="address">Адрес</string>
+    <string name="next">Далее</string>
+    <string name="tagScreen">tagScreen</string>
+    <string name="least_characters">Минимум 3 символа</string>
+    <string name="addressScreen">addressScreen</string>
+    <string name="not18">Доступ запрещен</string>
+    <string name="firstName">Имя</string>
+    <string name="lastName">Фамилия</string>
+    <string name="resultScreen">resultScreen</string>
+    <string name="date">Дата рождения</string>
+    <string name="fullAddress">Адрес проживния</string>
+    <string name="tags">Интересы</string>
+    <string name="wizardScreen">wizardScreen</string>
+    <string name="title">Личные данные</string>
+    <string name="result">Личная карточка</string>
+
+    <string-array name="tags">
+        <item>Android</item>
+        <item>Kotlin</item>
+        <item>Fragment</item>
+        <item>Tag</item>
+        <item>Cloud</item>
+    </string-array>
 </resources>

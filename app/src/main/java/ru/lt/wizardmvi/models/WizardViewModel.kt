@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.lt.wizardmvi.OneTimeEvent
+import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
 import ru.lt.wizardmvi.WizardCache
@@ -25,12 +26,12 @@ class WizardViewModel @Inject constructor(
     fun dispatch(action: ViewAction) {
         when (action) {
             is ViewAction.FirstNameChanged -> {
-                val firstNameError = if (action.firstName.length < 3) "Name must have at least 3 characters" else null
+                val firstNameError = if (action.firstName.length < 3) R.string.least_characters else null
                 wizardCache.firstName = if (firstNameError == null) action.firstName else null
                 updateViewState { copy(firstName = action.firstName, firstNameError = firstNameError) }
             }
             is ViewAction.LastNameChanged -> {
-                val lastNameError = if (action.lastName.length < 3) "Surname must have at least 3 characters" else null
+                val lastNameError = if (action.lastName.length < 3) R.string.least_characters else null
                 wizardCache.lastName = if (lastNameError == null) action.lastName else null
                 updateViewState { copy(lastName = action.lastName, lastNameError = lastNameError) }
             }

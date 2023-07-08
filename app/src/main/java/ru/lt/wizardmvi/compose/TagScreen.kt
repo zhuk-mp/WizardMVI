@@ -1,89 +1,108 @@
 package ru.lt.wizardmvi.compose
 
-import android.util.Log
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
 import ru.lt.wizardmvi.models.TagViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TagScreen(viewModel: TagViewModel = viewModel(), navController: NavController) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
     val navigateToAction by viewModel.navigateTo.observeAsState(initial = null)
+    val route = stringResource(id = R.string.resultScreen)
 
 
     LaunchedEffect(navigateToAction) {
         when (navigateToAction?.getContentIfNotHandled()) {
             is ViewAction.TagNextButtonClicked -> {
-                navController.navigate("resultScreen")
+                navController.navigate(route)
             }
             else -> {}
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        val tags = listOf("Android", "Kotlin", "Fragment", "Tag", "Cloud")
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            tags.forEach { tag ->
-                TagChip(
-                    text = tag,
-                    isSelected = viewState.tags.contains(tag),
-                    onSelectedChange = { isSelected ->
-                        if (isSelected) {
-                            viewModel.dispatch(ViewAction.TagChanged(tag))
-                        } else {
-                            viewModel.dispatch(ViewAction.TagDeselected(tag))
-                        }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.tags)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
-                )
+                }
+            )
+        },
+        bottomBar = {
+            Button(
+                onClick = { viewModel.dispatch(ViewAction.TagNextButtonClicked) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .navigationBarsPadding(),
+                enabled = viewState.isTagNextButtonEnabled
+            ) {
+                Text(stringResource(id = R.string.next))
             }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = { viewModel.dispatch(ViewAction.TagNextButtonClicked) },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
-                .padding(24.dp),
-            enabled = viewState.isTagNextButtonEnabled
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Next")
+            val context = LocalContext.current
+            val tagsArray = context.resources.getStringArray(R.array.tags)
+            val tags = tagsArray.toList()
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                tags.forEach { tag ->
+                    TagChip(
+                        text = tag,
+                        isSelected = viewState.tags.contains(tag),
+                        onSelectedChange = { isSelected ->
+                            if (isSelected) {
+                                viewModel.dispatch(ViewAction.TagChanged(tag))
+                            } else {
+                                viewModel.dispatch(ViewAction.TagDeselected(tag))
+                            }
+                        }
+                    )
+                }
+            }
         }
     }
 }

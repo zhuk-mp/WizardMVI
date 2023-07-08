@@ -1,11 +1,22 @@
 package ru.lt.wizardmvi.compose
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,88 +24,116 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
 import ru.lt.wizardmvi.models.AddressViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddressScreen(viewModel: AddressViewModel = viewModel(), navController: NavController) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
     val navigateToAction by viewModel.navigateTo.observeAsState(initial = null)
+    val route = stringResource(id = R.string.tagScreen)
 
 
     var country by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue("", TextRange(0, 7)))
+        mutableStateOf(TextFieldValue(""))
     }
     var city by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue("", TextRange(0, 7)))
+        mutableStateOf(TextFieldValue(""))
     }
 
     var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue("", TextRange(0, 7)))
+        mutableStateOf(TextFieldValue(""))
     }
 
     LaunchedEffect(navigateToAction) {
         when (navigateToAction?.getContentIfNotHandled()) {
             is ViewAction.AddressNextButtonClicked -> {
-                navController.navigate("tagScreen")
+                navController.navigate(route)
             }
             else -> {}
         }
     }
 
 
-    Column {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.fullAddress)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            Button(
+                onClick = { viewModel.dispatch(ViewAction.AddressNextButtonClicked) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .navigationBarsPadding(),
+                enabled = viewState.isAddressNextButtonEnabled
+            ) {
+                Text(stringResource(id = R.string.next))
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+        ) {
 
+            OutlinedTextField(
+                value = country,
+                onValueChange = {
+                    viewModel.dispatch(ViewAction.CountryChanged(it.text))
+                    country = it
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(24.dp),
+                label = { Text(stringResource(id = R.string.country)) },
+                supportingText = { if (viewState.countryError != null) Text(stringResource(id = viewState.countryError!!)) },
+                isError = viewState.countryError != null,
+            )
 
-        OutlinedTextField(
-            value = country,
-            onValueChange = { viewModel.dispatch(ViewAction.CountryChanged(it.text))
-                country = it },
-            modifier = Modifier.fillMaxWidth()
-                .padding(24.dp),
-            label = { Text("country") },
-            supportingText =  { if (viewState.countryError != null ) Text(viewState.countryError!!) } ,
-            isError = viewState.countryError != null,
-        )
+            OutlinedTextField(
+                value = city,
+                onValueChange = {
+                    viewModel.dispatch(ViewAction.CityChanged(it.text))
+                    city = it
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                label = { Text(stringResource(id = R.string.city)) },
+                supportingText = { if (viewState.cityError != null) Text(stringResource(id = viewState.cityError!!)) },
+                isError = viewState.cityError != null
+            )
 
-        OutlinedTextField(
-            value = city,
-            onValueChange = { viewModel.dispatch(ViewAction.CityChanged(it.text))
-                city = it },
-            modifier = Modifier.fillMaxWidth()
-                .padding(24.dp),
-            label = { Text("city") },
-            supportingText =  { if (viewState.cityError != null ) Text(viewState.cityError!!) } ,
-            isError = viewState.cityError != null
-        )
-
-        OutlinedTextField(
-            value = address,
-            onValueChange = { viewModel.dispatch(ViewAction.AddressChanged(it.text))
-                address = it },
-            modifier = Modifier.fillMaxWidth()
-                .padding(24.dp),
-            label = { Text("address") },
-            supportingText =  { if (viewState.addressError != null ) Text(viewState.addressError!!) } ,
-            isError = viewState.addressError != null
-        )
-
-
-        Button(
-            onClick = { viewModel.dispatch(ViewAction.AddressNextButtonClicked) },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .fillMaxWidth()
-                .padding(24.dp),
-            enabled = viewState.isAddressNextButtonEnabled) {
-            Text("Next")
+            OutlinedTextField(
+                value = address,
+                onValueChange = {
+                    viewModel.dispatch(ViewAction.AddressChanged(it.text))
+                    address = it
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(24.dp),
+                label = { Text(stringResource(id = R.string.address)) },
+                supportingText = { if (viewState.addressError != null) Text(stringResource(id = viewState.addressError!!)) },
+                isError = viewState.addressError != null
+            )
         }
     }
 }
