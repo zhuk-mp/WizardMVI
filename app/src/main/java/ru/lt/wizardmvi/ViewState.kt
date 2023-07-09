@@ -16,4 +16,6 @@ data class ViewState(
     val isAddressNextButtonEnabled: Boolean = false,
     val isTagNextButtonEnabled: Boolean = false,
     val tags: MutableList<String> = mutableListOf(),
+    val last: ArrayDeque<WizardGesture> = ArrayDeque(),
+    val now: WizardGesture = WizardGesture.Empty
 )

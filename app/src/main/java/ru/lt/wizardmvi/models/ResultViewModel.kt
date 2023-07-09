@@ -31,11 +31,11 @@ class ResultViewModel @Inject constructor(
 
 
     init {
-        _firstName.value = wizardCache.firstName
-        _lastName.value = wizardCache.lastName
+        _firstName.value = wizardCache.firstName ?: ""
+        _lastName.value = wizardCache.lastName ?: ""
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        _date.value = dateFormat.format(wizardCache.date)
-        _fullAddress.value ="${wizardCache.country}, ${wizardCache.city}, ${wizardCache.address}"
+        _date.value = if (wizardCache.date != null) dateFormat.format(wizardCache.date) else ""
+        _fullAddress.value ="${wizardCache.country ?: ""}, ${wizardCache.city ?: ""}, ${wizardCache.address ?: ""}"
         _selectedTags.value = wizardCache.selectedTags
     }
 }

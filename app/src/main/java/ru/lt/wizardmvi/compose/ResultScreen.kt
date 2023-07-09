@@ -1,5 +1,6 @@
 package ru.lt.wizardmvi.compose
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -28,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
-import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.ResultViewModel
 
@@ -41,6 +41,7 @@ fun ResultScreen(viewModel: ResultViewModel = viewModel(), navViewModel: NavView
     val fullAddress by viewModel.fullAddress.observeAsState("")
     val selectedTags by viewModel.selectedTags.observeAsState(initial = mutableListOf())
 
+    BackHandler(onBack = { navViewModel.dispatch(ViewAction.Back) })
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +50,7 @@ fun ResultScreen(viewModel: ResultViewModel = viewModel(), navViewModel: NavView
                 title = { Text(stringResource(id = R.string.result)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.TagScreen))
+                        navViewModel.dispatch(ViewAction.Back)
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }

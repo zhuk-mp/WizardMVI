@@ -1,5 +1,6 @@
 package ru.lt.wizardmvi.compose
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -39,6 +40,8 @@ import ru.lt.wizardmvi.models.TagViewModel
 fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
 
+    BackHandler(onBack = { navViewModel.dispatch(ViewAction.Back) })
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -46,7 +49,7 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
                 title = { Text(stringResource(id = R.string.tags)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.AddressScreen))
+                        navViewModel.dispatch(ViewAction.Back)
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }

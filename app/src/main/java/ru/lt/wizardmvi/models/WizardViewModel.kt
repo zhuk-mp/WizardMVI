@@ -31,7 +31,6 @@ class WizardViewModel @Inject constructor(
                 wizardCache.lastName = if (lastNameError == null) action.lastName else null
                 updateViewState { copy(lastName = action.lastName, lastNameError = lastNameError) }
             }
-
             is ViewAction.DateChanged -> {
                 wizardCache.date = action.date
                 updateViewState { copy(date = action.date) }

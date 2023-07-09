@@ -1,5 +1,6 @@
 package ru.lt.wizardmvi.compose
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +41,6 @@ import ru.lt.wizardmvi.models.NavViewModel
 fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
 
-
     var country by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(viewState.country))
     }
@@ -52,6 +52,10 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
         mutableStateOf(TextFieldValue(viewState.address))
     }
 
+    BackHandler(onBack = {
+        navViewModel.dispatch(ViewAction.Back)
+    })
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -59,7 +63,7 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
                 title = { Text(stringResource(id = R.string.fullAddress)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.WizardScreen))
+                        navViewModel.dispatch(ViewAction.Back)
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
