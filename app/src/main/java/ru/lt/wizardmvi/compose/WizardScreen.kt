@@ -63,7 +63,7 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.wizardGesture.value = WizardGesture.AddressScreen
+                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.AddressScreen))
                           },
                 modifier = Modifier
                     .fillMaxWidth()

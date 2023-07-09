@@ -59,7 +59,7 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
                 title = { Text(stringResource(id = R.string.fullAddress)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.wizardGesture.value = WizardGesture.WizardScreen
+                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.WizardScreen))
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
@@ -69,7 +69,7 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.wizardGesture.value = WizardGesture.TagScreen
+                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.TagScreen))
                           },
                 modifier = Modifier
                     .fillMaxWidth()

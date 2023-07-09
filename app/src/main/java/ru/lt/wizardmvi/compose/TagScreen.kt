@@ -46,7 +46,7 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
                 title = { Text(stringResource(id = R.string.tags)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.wizardGesture.value = WizardGesture.AddressScreen
+                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.AddressScreen))
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
@@ -56,7 +56,7 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.wizardGesture.value = WizardGesture.ResultScreen
+                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.ResultScreen))
                           },
                 modifier = Modifier
                     .fillMaxWidth()

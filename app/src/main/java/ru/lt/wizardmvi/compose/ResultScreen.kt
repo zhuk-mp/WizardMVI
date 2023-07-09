@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.lt.wizardmvi.R
+import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.ResultViewModel
@@ -48,7 +49,7 @@ fun ResultScreen(viewModel: ResultViewModel = viewModel(), navViewModel: NavView
                 title = { Text(stringResource(id = R.string.result)) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navViewModel.wizardGesture.value = WizardGesture.TagScreen
+                        navViewModel.dispatch(ViewAction.Nav(WizardGesture.TagScreen))
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
