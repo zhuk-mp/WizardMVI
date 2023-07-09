@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -32,36 +31,24 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
+import ru.lt.wizardmvi.WizardGesture
+import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.WizardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WizardScreen(viewModel: WizardViewModel = viewModel(), navController: NavController) {
+fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
-    val navigateToAction by viewModel.navigateTo.observeAsState(initial = null)
-    val route = stringResource(id = R.string.addressScreen)
 
 
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(viewState.firstName))
     }
     var lastName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
-    }
-
-
-
-    LaunchedEffect(navigateToAction) {
-        when (navigateToAction?.getContentIfNotHandled()) {
-            is ViewAction.NextButtonClicked -> {
-                navController.navigate(route)
-            }
-            else -> {}
-        }
+        mutableStateOf(TextFieldValue(viewState.lastName))
     }
 
     Scaffold(
@@ -75,7 +62,9 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navController: NavCon
         },
         bottomBar = {
             Button(
-                onClick = { viewModel.dispatch(ViewAction.NextButtonClicked) },
+                onClick = {
+                    navViewModel.wizardGesture.value = WizardGesture.AddressScreen
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
@@ -127,7 +116,8 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navController: NavCon
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp), fontSize = 18.sp
             )
-            val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+            val initialSelectedDateMillis = if (viewState.date == 0L || viewState.date == null) null else viewState.date
+            val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input, initialSelectedDateMillis = initialSelectedDateMillis)
 
             DatePicker(
                 state = datePickerState,

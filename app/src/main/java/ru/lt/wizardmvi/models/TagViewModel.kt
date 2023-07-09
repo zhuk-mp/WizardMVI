@@ -3,7 +3,6 @@ package ru.lt.wizardmvi.models
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.lt.wizardmvi.OneTimeEvent
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
 import ru.lt.wizardmvi.WizardCache
@@ -15,20 +14,12 @@ class TagViewModel @Inject constructor(
 ) : ViewModel() {
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData(ViewState())
-    val navigateTo: MutableLiveData<OneTimeEvent<ViewAction>> = MutableLiveData()
     val selectedTags: MutableLiveData<MutableList<String>> = MutableLiveData(mutableListOf())
 
     fun dispatch(action: ViewAction) {
         when (action) {
             is ViewAction.TagChanged -> {
-                toggleTag(action.tag, true)
-            }
-            is ViewAction.TagDeselected -> {
-                toggleTag(action.tag, false)
-            }
-
-            is ViewAction.TagNextButtonClicked -> {
-                navigateTo.value = OneTimeEvent(ViewAction.TagNextButtonClicked)
+                selectedTags.value?.let {toggleTag(action.tag, !it.contains(action.tag))}
             }
             else -> {}
         }

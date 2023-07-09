@@ -3,7 +3,6 @@ package ru.lt.wizardmvi.models
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.lt.wizardmvi.OneTimeEvent
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
@@ -19,9 +18,6 @@ class WizardViewModel @Inject constructor(
 ) : ViewModel() {
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData(ViewState())
-    val navigateTo: MutableLiveData<OneTimeEvent<ViewAction>> = MutableLiveData()
-
-
 
     fun dispatch(action: ViewAction) {
         when (action) {
@@ -40,11 +36,6 @@ class WizardViewModel @Inject constructor(
                 wizardCache.date = action.date
                 updateViewState { copy(date = action.date) }
             }
-
-            is ViewAction.NextButtonClicked -> {
-                navigateTo.value = OneTimeEvent(ViewAction.NextButtonClicked)
-            }
-
             else -> {}
         }
         updateNextButtonState()

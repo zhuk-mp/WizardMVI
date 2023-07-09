@@ -26,13 +26,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import ru.lt.wizardmvi.R
+import ru.lt.wizardmvi.WizardGesture
+import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.ResultViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ResultScreen(viewModel: ResultViewModel = viewModel(), navController: NavController) {
+fun ResultScreen(viewModel: ResultViewModel = viewModel(), navViewModel: NavViewModel) {
     val firstName by viewModel.firstName.observeAsState("")
     val lastName by viewModel.lastName.observeAsState("")
     val date by viewModel.date.observeAsState("")
@@ -46,7 +47,9 @@ fun ResultScreen(viewModel: ResultViewModel = viewModel(), navController: NavCon
             TopAppBar(
                 title = { Text(stringResource(id = R.string.result)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navViewModel.wizardGesture.value = WizardGesture.TagScreen
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
                 }

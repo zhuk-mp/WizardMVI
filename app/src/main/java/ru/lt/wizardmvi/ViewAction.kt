@@ -8,8 +8,4 @@ sealed class ViewAction {
     data class CityChanged(val city: String) : ViewAction()
     data class AddressChanged(val address: String) : ViewAction()
     data class TagChanged(val tag: String) : ViewAction()
-    data class TagDeselected(val tag: String) : ViewAction()
-    object NextButtonClicked : ViewAction()
-    object AddressNextButtonClicked : ViewAction()
-    object TagNextButtonClicked : ViewAction()
 }

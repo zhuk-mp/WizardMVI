@@ -18,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -29,40 +28,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
+import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.AddressViewModel
+import ru.lt.wizardmvi.models.NavViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddressScreen(viewModel: AddressViewModel = viewModel(), navController: NavController) {
+fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
-    val navigateToAction by viewModel.navigateTo.observeAsState(initial = null)
-    val route = stringResource(id = R.string.tagScreen)
 
 
     var country by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(viewState.country))
     }
     var city by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(viewState.city))
     }
 
     var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(viewState.address))
     }
-
-    LaunchedEffect(navigateToAction) {
-        when (navigateToAction?.getContentIfNotHandled()) {
-            is ViewAction.AddressNextButtonClicked -> {
-                navController.navigate(route)
-            }
-            else -> {}
-        }
-    }
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,7 +58,9 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navController: NavC
             TopAppBar(
                 title = { Text(stringResource(id = R.string.fullAddress)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navViewModel.wizardGesture.value = WizardGesture.WizardScreen
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
                 }
@@ -78,7 +68,9 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navController: NavC
         },
         bottomBar = {
             Button(
-                onClick = { viewModel.dispatch(ViewAction.AddressNextButtonClicked) },
+                onClick = {
+                    navViewModel.wizardGesture.value = WizardGesture.TagScreen
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)

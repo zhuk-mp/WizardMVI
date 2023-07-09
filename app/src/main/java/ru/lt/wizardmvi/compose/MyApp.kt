@@ -1,44 +1,41 @@
 package ru.lt.wizardmvi.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import ru.lt.wizardmvi.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.AddressViewModel
+import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.ResultViewModel
 import ru.lt.wizardmvi.models.TagViewModel
 import ru.lt.wizardmvi.models.WizardViewModel
 import ru.lt.wizardmvi.ui.theme.WizardMVITheme
 
 @Composable
-fun MyApp() {
+fun MyApp(navViewModel: NavViewModel = viewModel()) {
     WizardMVITheme {
-        val navController = rememberNavController()
-        val routeWizardScreen = stringResource(id = R.string.wizardScreen)
-        val routeAddressScreen = stringResource(id = R.string.addressScreen)
-        val routeTagScreen = stringResource(id = R.string.tagScreen)
-        val routeResultScreen = stringResource(id = R.string.resultScreen)
+        val wizardGesture by navViewModel.wizardGesture.observeAsState()
 
-        NavHost(navController, startDestination = routeWizardScreen) {
-            composable(routeWizardScreen) {
+        when (wizardGesture) {
+            WizardGesture.WizardScreen-> {
                 val wizardViewModel: WizardViewModel = hiltViewModel()
-                WizardScreen(wizardViewModel, navController)
+                WizardScreen(wizardViewModel, navViewModel)
             }
-            composable(routeAddressScreen) {
+            WizardGesture.AddressScreen-> {
                 val addressScreenModel: AddressViewModel = hiltViewModel()
-                AddressScreen(addressScreenModel, navController)
+                AddressScreen(addressScreenModel, navViewModel)
             }
-            composable(routeTagScreen) {
+            WizardGesture.TagScreen-> {
                 val tagScreenModel: TagViewModel = hiltViewModel()
-                TagScreen(tagScreenModel, navController)
+                TagScreen(tagScreenModel, navViewModel)
             }
-            composable(routeResultScreen) {
+            WizardGesture.ResultScreen-> {
                 val resultScreenModel: ResultViewModel = hiltViewModel()
-                ResultScreen(resultScreenModel, navController)
+                ResultScreen(resultScreenModel, navViewModel)
             }
+            else -> {}
         }
     }
 }

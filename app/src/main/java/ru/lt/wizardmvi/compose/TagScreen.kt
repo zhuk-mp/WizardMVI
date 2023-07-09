@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -28,35 +27,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
+import ru.lt.wizardmvi.WizardGesture
+import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.TagViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun TagScreen(viewModel: TagViewModel = viewModel(), navController: NavController) {
+fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
-    val navigateToAction by viewModel.navigateTo.observeAsState(initial = null)
-    val route = stringResource(id = R.string.resultScreen)
 
-
-    LaunchedEffect(navigateToAction) {
-        when (navigateToAction?.getContentIfNotHandled()) {
-            is ViewAction.TagNextButtonClicked -> {
-                navController.navigate(route)
-            }
-            else -> {}
-        }
-    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.tags)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navViewModel.wizardGesture.value = WizardGesture.AddressScreen
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = null)
                     }
                 }
@@ -64,7 +55,9 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navController: NavControlle
         },
         bottomBar = {
             Button(
-                onClick = { viewModel.dispatch(ViewAction.TagNextButtonClicked) },
+                onClick = {
+                    navViewModel.wizardGesture.value = WizardGesture.ResultScreen
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
@@ -93,12 +86,7 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navController: NavControlle
                     TagChip(
                         text = tag,
                         isSelected = viewState.tags.contains(tag),
-                        onSelectedChange = { isSelected ->
-                            if (isSelected) {
-                                viewModel.dispatch(ViewAction.TagChanged(tag))
-                            } else {
-                                viewModel.dispatch(ViewAction.TagDeselected(tag))
-                            }
+                        onSelectedChange = { viewModel.dispatch(ViewAction.TagChanged(tag))
                         }
                     )
                 }
