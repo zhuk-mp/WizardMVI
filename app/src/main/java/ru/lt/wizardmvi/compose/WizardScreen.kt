@@ -1,13 +1,12 @@
 package ru.lt.wizardmvi.compose
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,20 +64,6 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
                     .padding(horizontal = 24.dp),
                 title = { Text(stringResource(id = R.string.title)) }
             )
-        },
-        bottomBar = {
-            Button(
-                onClick = {
-                    navViewModel.dispatch(ViewAction.Next)
-                          },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .navigationBarsPadding(),
-                enabled = viewState.isNextButtonEnabled
-            ) {
-                Text(stringResource(id = R.string.next))
-            }
         }
     ) { paddingValues ->
         Column(
@@ -87,8 +72,6 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
                 .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
         ) {
-
-
             OutlinedTextField(
                 value = firstName,
                 onValueChange = {
@@ -155,6 +138,11 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
                     isChecked = it
                     navViewModel.dispatch(ViewAction.NextChecked(it))
                 }
+            )
+            Spacer(Modifier.weight(1f))
+            ButtonNext(
+                onClick = { navViewModel.dispatch(ViewAction.Next) },
+                enabled = viewState.isNextButtonEnabled
             )
         }
     }

@@ -5,15 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,20 +58,6 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
                     }
                 }
             )
-        },
-        bottomBar = {
-            Button(
-                onClick = {
-                    navViewModel.dispatch(ViewAction.Next)
-                          },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .navigationBarsPadding(),
-                enabled = viewState.isTagNextButtonEnabled
-            ) {
-                Text(stringResource(id = R.string.next))
-            }
         }
     ) { paddingValues ->
         Column(
@@ -98,6 +83,11 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
                     )
                 }
             }
+            Spacer(Modifier.weight(1f))
+            ButtonNext(
+                onClick = { navViewModel.dispatch(ViewAction.Next) },
+                enabled = viewState.isNextButtonEnabled
+            )
         }
     }
 }

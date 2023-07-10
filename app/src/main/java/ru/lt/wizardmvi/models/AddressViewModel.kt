@@ -54,14 +54,14 @@ class AddressViewModel @Inject constructor(
     private fun updateNextButtonState() {
         val state = viewState.value!!
         val navState = navViewState.value!!
-        val isAddressNextButtonEnabled =
+        val isNextButtonEnabled =
         state.countryError == null && state.cityError == null && state.addressError == null &&
                 state.country.isNotEmpty() && state.city.isNotEmpty() && state.address.isNotEmpty()
-        if (isAddressNextButtonEnabled) {
+        if (isNextButtonEnabled) {
             val nextScreen = if (navState.isCheckedNav) WizardGesture.ResultScreen else WizardGesture.TagScreen
             navViewState.value = navState.copy(next = nextScreen)
         } else
             navViewState.value = navState.copy(next = WizardGesture.Empty)
-        viewState.value = state.copy(isAddressNextButtonEnabled = isAddressNextButtonEnabled)
+        viewState.value = state.copy(isNextButtonEnabled = isNextButtonEnabled)
     }
 }

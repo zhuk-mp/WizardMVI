@@ -2,15 +2,14 @@ package ru.lt.wizardmvi.compose
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,20 +72,6 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
                     }
                 }
             )
-        },
-        bottomBar = {
-            Button(
-                onClick = {
-                    navViewModel.dispatch(ViewAction.Next)
-                          },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .navigationBarsPadding(),
-                enabled = viewState.isAddressNextButtonEnabled
-            ) {
-                Text(stringResource(id = R.string.next))
-            }
         }
     ) { paddingValues ->
         Column(
@@ -133,6 +118,11 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
                 label = { Text(stringResource(id = R.string.address)) },
                 supportingText = { if (viewState.addressError != null) Text(stringResource(id = viewState.addressError!!)) },
                 isError = viewState.addressError != null
+            )
+            Spacer(Modifier.weight(1f))
+            ButtonNext(
+                onClick = { navViewModel.dispatch(ViewAction.Next) },
+                enabled = viewState.isNextButtonEnabled
             )
         }
     }

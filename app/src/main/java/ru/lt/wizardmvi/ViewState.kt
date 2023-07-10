@@ -13,8 +13,6 @@ data class ViewState(
     val cityError: Int? = null,
     val addressError: Int? = null,
     val isNextButtonEnabled: Boolean = false,
-    val isAddressNextButtonEnabled: Boolean = false,
-    val isTagNextButtonEnabled: Boolean = false,
     val isCheckedNav: Boolean = false,
     val tags: MutableList<String> = mutableListOf(),
     val last: ArrayDeque<WizardGesture> = ArrayDeque(),

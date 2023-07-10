@@ -56,13 +56,13 @@ class TagViewModel @Inject constructor(
     private fun updateNextButtonState() {
         val state = viewState.value!!
         val navState = navViewState.value!!
-        val isTagNextButtonEnabled = selectedTags.value?.isNotEmpty() == true
-        if (isTagNextButtonEnabled) {
+        val isNextButtonEnabled = selectedTags.value?.isNotEmpty() == true
+        if (isNextButtonEnabled) {
             val nextScreen = if (navState.isCheckedNav) WizardGesture.AddressScreen else WizardGesture.ResultScreen
             navViewState.value = navState.copy(next = nextScreen)
         } else
             navViewState.value = navState.copy(next = WizardGesture.Empty)
-        viewState.value = state.copy(isTagNextButtonEnabled = isTagNextButtonEnabled)
+        viewState.value = state.copy(isNextButtonEnabled = isNextButtonEnabled)
     }
 
 
