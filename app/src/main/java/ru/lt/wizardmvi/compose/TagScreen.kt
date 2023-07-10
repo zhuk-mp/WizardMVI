@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -31,7 +32,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
-import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.TagViewModel
 
@@ -39,6 +39,10 @@ import ru.lt.wizardmvi.models.TagViewModel
 @Composable
 fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
+
+    LaunchedEffect(Unit) {
+        viewModel.dispatch(ViewAction.Now)
+    }
 
     BackHandler(onBack = { navViewModel.dispatch(ViewAction.Back) })
 
@@ -59,7 +63,7 @@ fun TagScreen(viewModel: TagViewModel = viewModel(), navViewModel: NavViewModel)
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.ResultScreen))
+                    navViewModel.dispatch(ViewAction.Next)
                           },
                 modifier = Modifier
                     .fillMaxWidth()

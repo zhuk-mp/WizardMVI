@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +33,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
-import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.AddressViewModel
 import ru.lt.wizardmvi.models.NavViewModel
 
@@ -50,6 +50,10 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
 
     var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(viewState.address))
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.dispatch(ViewAction.Now)
     }
 
     BackHandler(onBack = {
@@ -73,7 +77,7 @@ fun AddressScreen(viewModel: AddressViewModel = viewModel(), navViewModel: NavVi
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.TagScreen))
+                    navViewModel.dispatch(ViewAction.Next)
                           },
                 modifier = Modifier
                     .fillMaxWidth()

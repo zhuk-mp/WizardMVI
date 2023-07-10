@@ -7,14 +7,18 @@ import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
 import ru.lt.wizardmvi.WizardCache
+import ru.lt.wizardmvi.WizardGesture
+import ru.lt.wizardmvi.WizardStats
 import javax.inject.Inject
 
 @HiltViewModel
 class AddressViewModel @Inject constructor(
-    val wizardCache: WizardCache
+    val wizardCache: WizardCache,
+    wizardStats: WizardStats
 ) : ViewModel() {
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData(ViewState())
+    val navViewState: MutableLiveData<ViewState> = wizardStats.navViewState
 
     fun dispatch(action: ViewAction) {
         when (action) {
@@ -33,6 +37,9 @@ class AddressViewModel @Inject constructor(
                 wizardCache.address = if (addressError == null) action.address else null
                 updateViewState { copy(address = action.address, addressError = addressError) }
             }
+            is ViewAction.Now -> {
+                updateNextButtonState()
+            }
             else -> {}
         }
         updateNextButtonState()
@@ -46,9 +53,15 @@ class AddressViewModel @Inject constructor(
 
     private fun updateNextButtonState() {
         val state = viewState.value!!
-        viewState.value = state.copy(isAddressNextButtonEnabled =
+        val navState = navViewState.value!!
+        val isAddressNextButtonEnabled =
         state.countryError == null && state.cityError == null && state.addressError == null &&
                 state.country.isNotEmpty() && state.city.isNotEmpty() && state.address.isNotEmpty()
-        )
+        if (isAddressNextButtonEnabled) {
+            val nextScreen = if (navState.isCheckedNav) WizardGesture.ResultScreen else WizardGesture.TagScreen
+            navViewState.value = navState.copy(next = nextScreen)
+        } else
+            navViewState.value = navState.copy(next = WizardGesture.Empty)
+        viewState.value = state.copy(isAddressNextButtonEnabled = isAddressNextButtonEnabled)
     }
 }

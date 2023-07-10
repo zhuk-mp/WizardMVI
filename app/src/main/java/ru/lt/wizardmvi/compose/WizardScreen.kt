@@ -13,10 +13,12 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -34,13 +36,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.lt.wizardmvi.R
 import ru.lt.wizardmvi.ViewAction
 import ru.lt.wizardmvi.ViewState
-import ru.lt.wizardmvi.WizardGesture
 import ru.lt.wizardmvi.models.NavViewModel
 import ru.lt.wizardmvi.models.WizardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavViewModel) {
+fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavViewModel = viewModel()) {
     val viewState by viewModel.viewState.observeAsState(initial = ViewState())
 
 
@@ -49,6 +50,11 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
     }
     var lastName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(viewState.lastName))
+    }
+    var isChecked by rememberSaveable{ mutableStateOf(viewState.isCheckedNav) }
+
+    LaunchedEffect(Unit) {
+        viewModel.dispatch(ViewAction.Now)
     }
 
     Scaffold(
@@ -63,7 +69,7 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
         bottomBar = {
             Button(
                 onClick = {
-                    navViewModel.dispatch(ViewAction.Nav(WizardGesture.AddressScreen))
+                    navViewModel.dispatch(ViewAction.Next)
                           },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,6 +146,16 @@ fun WizardScreen(viewModel: WizardViewModel = viewModel(), navViewModel: NavView
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
+            Switch(
+                checked = isChecked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                onCheckedChange = {
+                    isChecked = it
+                    navViewModel.dispatch(ViewAction.NextChecked(it))
+                }
+            )
         }
     }
 }
